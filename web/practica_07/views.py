@@ -155,8 +155,73 @@ def listarMusicos(request):
 
     return render(request, "practica_07/paginador.html", {'datos': musicos, 'tipo': "Musico"})
 
-#def reclamaDatos(request):
+def reclamaDatos(request):
+    print("EMPIEZA RECLAMADATOS")
 
+    tipo = str(request.GET['clase'])
+
+    data = dict()
+
+    ini = request.GET['inicio']
+    ini = int(ini)
+    print("ini = " + str(ini))
+    if tipo == "Grupo":
+        
+        grupos = []
+        
+        g = Grupo()
+
+        grupos = g.__class__.objects.all()
+
+        data["len"] = len(grupos)
+        i = 0
+        for grupo in grupos:
+            if i >= ini and i < ini+3:
+                print("i = " + str(i))
+                print("nombre = " + grupo.nombre)
+                data[i]=grupo.nombre
+                data[i] = dict()
+                data[i]["pk"] = grupo.pk
+            i = i+1
+        
+        
+        return JsonResponse(data)
+    elif tipo == "Album":
+        albumes = []
+        a = Album()
+
+        albumes = a.__class__.objects.all()
+
+        data["len"] = len(albumes)
+        
+        i = 0
+        for album in albumes:
+            if i >= ini and i < ini+3:
+                print("i = " + str(i))
+                print("nombre = " + album.titulo)
+                data[i]=album.titulo
+                data[i] = dict()
+                data[i]["pk"] = album.pk
+            i = i+1
+        return JsonResponse(data)
+    else:
+        musicos = []
+        m = Musico()
+
+        musicos = m.__class__.objects.all()
+        data["len"] = len(musicos)
+
+        i = 0
+        for musico in musicos:
+            if i >= ini and i < ini+3:
+                print("i = " + str(i))
+                print("nombre = " + musico.nombre)
+                data[i]=musico.nombre
+                data[i] = dict()
+                data[i]["pk"] = musico.pk
+                data[i]["nombre"] = musico.nombre + " " + musico.apellidos
+            i = i+1
+        return JsonResponse(data)
 
 #-------------Mostrar datos de cada objeto----------------------------------------------------
 def borrarGrupo(request, pk):

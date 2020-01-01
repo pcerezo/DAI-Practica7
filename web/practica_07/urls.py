@@ -7,9 +7,9 @@ urlpatterns = [
     url(r'^test/$', views.test, name='test'),
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^music/$', views.music, name='music'),
-    path(r'music/grupo/(?\D<pk>)/', views.datosGrupo, name='datosGrupo'),
-    path(r'music/album/(?\D<pk>)/', views.datosAlbum, name='datosAlbum'),
-    path(r'music/musico/(?\D<pk>)/', views.datosMusico, name='datosMusico'),
+    path(r'music/grupo/<pk>/', views.datosGrupo, name='datosGrupo'),
+    path(r'music/album/<pk>/', views.datosAlbum, name='datosAlbum'),
+    path(r'music/musico/<pk>/', views.datosMusico, name='datosMusico'),
     path(r'music/nuevoGrupo/', views.nuevoGrupo, name='nuevoGrupo'),
     path(r'music/nuevoAlbum/', views.nuevoAlbum, name='nuevoAlbum'),
     path(r'music/nuevoMusico/', views.nuevoMusico, name='nuevoMusico'),
@@ -20,7 +20,7 @@ urlpatterns = [
     path(r'music/listarAlbumes/', views.listarAlbumes, name='listarAlbumes'),
     path(r'music/listarMusicos/', views.listarMusicos, name='listarMusicos'),
     path(r'music/borrarGrupo/(?\D<pk>)/', views.borrarGrupo, name='borrarGrupo'),
-
+    path(r'music/reclamaDatos/', views.reclamaDatos, name='reclamaDatos'),
 #---Manejo de sesiones----------------------------------------------------------
     path(r'register/', views.signup, name='signup'),
     path(r'login/', views.login, name='login'),
