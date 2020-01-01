@@ -19,8 +19,8 @@ from django.conf.urls import include, url
 
 urlpatterns = [
 	path('admin/', admin.site.urls),
-	url(r'^app/', include('practica_07.urls')),
+	url(r'^app/', include('practica_08.urls')),
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^accounts/', include('practica_07.urls'))
+    url(r'^accounts/', include('practica_08.urls'))
     #url(r'^accounts/login', include('practica_06.urls')),
 ]

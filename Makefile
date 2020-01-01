@@ -10,7 +10,7 @@ django-startproject:
 	sudo chown -R ${USER}:${USER} .
 
 django-startapp:
-	sudo docker-compose run web python manage.py startapp practica_07
+	sudo docker-compose run web python manage.py startapp practica_08
 	sudo chown -R ${USER}:${USER} .
 
 django-migrate:

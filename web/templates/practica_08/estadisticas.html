@@ -1,0 +1,100 @@
+{% extends "practica_08/music.html" %}
+
+{% block estadisticas %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {      
+            var n_grupos, n_albumes, n_musicos;
+            var n_datos = [];      
+           
+            $.ajax({
+                url: "{% url 'cantidades' %}",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    console.log("success");
+                    n_grupos = data[0], n_albumes = data[1], n_musicos = data[2];
+                    console.log("n_grupos: " + n_grupos);
+                    
+                    n_datos.push(n_grupos);
+                    n_datos.push(n_albumes);
+                    n_datos.push(n_musicos);
+
+                    var myChart = Highcharts.chart('resumen', {
+                        chart: {
+                            type: 'bar'
+                        },
+                        title: {
+                            text: 'Cantidades'
+                        },
+                        xAxis: {
+                            categories: ['Grupos', 'Álbumes', 'Músicos']
+                        },
+                        yAxis: {
+                            title: {
+                                text: ''
+                            }
+                        },
+                        series: [{
+                            data: n_datos
+                        },]
+                    });
+                },
+                failure: function(data) {
+                    console.error("No va");
+                }
+            });
+            
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("Voy a llamar al segundo ajax:");
+            $.ajax({
+                url: "{% url 'albumes_grupo' %}",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    console.log("Album_grupo: Success");
+                    var grupos = [];
+                    var albumes = [];
+
+                    for (i = 0; i < data["len"]; i++) {
+                        grupos.push(data[i]["grupo"]);
+                        albumes.push(data[i]["albumes"]);
+                    }
+
+                    console.log("albumes" + albumes);
+                    
+                    var myChart = Highcharts.chart('albumes_grupo', {
+                        chart: {
+                            type: 'bar'
+                        },
+                        title: {
+                            text: 'Álbumes por grupo'
+                        },
+                        xAxis: {
+                            categories: grupos
+                        },
+                        yAxis: {
+                            title: {
+                                text: ''
+                            }
+                        },
+                        series: [{
+                            data: albumes
+                        },]
+                    });
+                },
+                failure: function(data) {
+                    console.error("Album_grupo: No va")
+                }
+            });
+        });
+    </script>
+    {% endblock %}
+
+    {% block container_stats %}
+        <h3 class="text-center">Resumen estadístico de datos de la página</h3>
+        <div id="resumen" style="width:100%; height:400px;"></div>
+        <div id="albumes_grupo" style="width:100%; height:400px;"></div>
+    {% endblock %}

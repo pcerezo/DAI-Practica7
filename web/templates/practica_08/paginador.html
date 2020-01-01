@@ -1,0 +1,182 @@
+{% extends "practica_08/music.html" %}
+
+{% block datos %}
+<div class="resultados" id="lista">
+    {% if tipo == "Grupo" %}
+        <h3>Lista de grupos:</h3>
+    {% elif tipo == "Album" %}
+        <h3>Lista de álbumes</h3>
+    {% else %}
+        <h3>Lista de músicos</h3>
+    {% endif %}
+
+    <label>Número de elementos por página</label>
+    <select id="paginador" name="elementos_pagina">
+        <option value="3">3</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+    </select>
+    <br>
+
+    <div class="elementos">
+        {% if tipo == "Grupo" %}
+            <script>var tipo = "Grupo";</script>
+            <!--{% for grupo in datos %} -->
+                <!--<a class="elemento" href="{% url 'datosGrupo' pk=grupo.pk %}">{{ grupo.nombre }}</a> -->
+            <!--{% endfor %} -->
+        {% elif tipo == "Album" %}
+            <script>var tipo = "Album";</script>
+            <!--{% for album in datos %}-->
+                <!--<a class="elemento" href="{% url 'datosAlbum' pk=album.pk %}">{{ album.titulo }}</a> -->
+            <!--{% endfor %}-->
+        {% else %}
+            <script>var tipo = "Musico";</script>
+            <!--{% for musico in datos %} -->
+                <!--<a class="elemento" href="{% url 'datosMusico' pk=musico.pk %}">{{ musico.nombre }}</a> -->
+            <!--{% endfor %}-->
+        {% endif %}
+    </div>
+</div>
+
+<button class="btn" id="back">Anterior</button>
+<button class="btn" id="next" value=3>Siguiente</button>
+
+<script>
+    var ini = 0;    
+
+    function trocear(num, ini) {
+        num = document.getElementById("paginador").value;
+        console.log("Num = " + num);
+        console.log("Ini = " + ini);
+        var div = document.getElementById("lista");
+        var a = div.getElementsByClassName("elemento");
+        var cont = 0;
+
+        for (var i = 0; i < a.length; i++) {
+            console.log(i);
+            if (cont == num || ini > i) {
+                console.log("paso el umbral")
+                a[i].style.display = "none";
+            }
+            else {
+                cont++;
+                a[i].style.display = "block";
+            }
+
+            if (parseInt(ini) >= a.length - 1 || parseInt(ini) + parseInt(num) > a.length -1) { //Llegamos al tope
+                console.log("Ini + num = " + (parseInt(ini) + parseInt(num)));
+                $("button#next").css('visibility', 'hidden');
+            }
+            else {
+                $("button#next").css('visibility', 'visible');
+            }
+
+            if (ini <= 0) { //Estamos al principio
+                ini = 0;
+                $("button#back").css('visibility', 'hidden');
+            }
+            else {
+                $("button#back").css('visibility', 'visible');
+            }
+        }
+    }
+
+    num = parseInt(document.getElementById("paginador").value);
+    
+    trocear(num, ini);
+
+    /*$("button#next").click(function() {
+        ini = parseInt(ini) + parseInt(num);
+        trocear(num, ini);
+    });*/
+
+    /*$("button#back").click(function() {
+        ini = parseInt(ini) - parseInt(num)
+        trocear(num, ini);
+    });*/
+
+    function paginar(sentido) {
+        console.log("paginador con ajax")
+        console.log("Tipo de datos: " + tipo)
+        if (sentido == "next")
+            ini = parseInt(ini) + parseInt(num)
+        else {
+            ini = parseInt(ini) - parseInt(num)
+            if (ini < 0) ini = 0;
+        }
+
+        $.ajax({
+            url: "{% url 'reclamaDatos' %}",
+            type: "GET",
+            data: {inicio: ini, 'clase': tipo},
+            dataType : "json",
+            success: function(data) {
+                console.log("success"); 
+                console.log("length = " + data["len"]);
+
+                verBotones(ini, data["len"]);
+
+                $("a.elemento").remove();
+                $("br").remove();
+                
+                var id;
+                var musico;
+                for (i = 0; i < data["len"]; i++) {
+                    if (i >= ini && i < ini+3) {
+                        id = data[i]["pk"];
+                        if (tipo == "Grupo"){
+                            $("div.elementos").append('<a class="elemento" href="/accounts/music/grupo/' + id + '">' + id + '</a><br>');
+                        }
+                        else if (tipo == "Album") {
+                            $("div.elementos").append('<a class="elemento" href="/accounts/music/album/' + id + '">' + id + '</a><br>');
+                        }
+                        else {
+                            musico = data[i]["nombre"];
+                            $("div.elementos").append('<a class="elemento" href="/accounts/music/musico/' + id + '">' + musico + '</a><br>');
+                        }
+                    }//else
+                      //  $("div.elementos").remove("<a href=''>" + data[i] + "</a><br>");
+                }
+                
+            },
+            failure: function(datos) {
+                alert("No va");
+                console.error("No va");
+            }
+        });
+    }
+
+    $(document).ready(function(){ paginar("back")});
+
+    $("button#next").click(function(){ paginar("next")});
+
+    $("button#back").click(function(){ paginar("back")});
+
+    function verBotones(ini, len) {
+        if (parseInt(ini) >= len - 1 || parseInt(ini) + parseInt(num) > len -1) { //Llegamos al tope
+            console.log("Ini + num = " + (parseInt(ini) + parseInt(num)));
+            $("button#next").css('visibility', 'hidden');
+        }
+        else {
+            $("button#next").css('visibility', 'visible');
+        }
+
+        if (ini <= 0) { //Estamos al principio
+            ini = 0;
+            $("button#back").css('visibility', 'hidden');
+        }
+        else {
+            $("button#back").css('visibility', 'visible');
+        }
+    }
+
+    /*function verDatos(datos) {
+        
+        for (grupo in datos) {
+            <a class="elemento" href="">grupo</a>
+        }
+    }*/
+
+</script>
+
+{% endblock %}

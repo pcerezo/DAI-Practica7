@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'bootstrap4',
 
-    'practica_07',
+    'practica_08',
 ]
 
 SITE_ID = 1

@@ -1,12 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <title>DAI Práctica 8</title>
     {% load static %}
     <script type="text/javascript" src="/static/bootstrap/dist/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+
+    <script src="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://api.mqcdn.com/sdk/mapquest-js/v1.3.2/mapquest.css"/>
+
+    {% block estadisticas %}
+    {% endblock %}
+    
+    {% block mapa %}
+    {% endblock %}
 </head>
 <body>
 <h1 class="text-center"> Base de datos de música </h1>
@@ -51,6 +61,10 @@
                 <a href="{% url 'listarMusicos' %}">Listar músicos</a>
             </nav>
         </div>
+
+        {% block container_stats %}
+        {% endblock %}
+        
         <div class="container text-center">
             {% block content %}
             {% endblock %}
@@ -60,8 +74,12 @@
             {% endblock %}
             </div>
         </div>
+
+        
         
     </div>
+
+    <div id="map"></div>
 
     <script>
         $("button#background-default").click(function(){

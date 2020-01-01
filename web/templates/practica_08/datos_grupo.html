@@ -1,0 +1,45 @@
+{% extends "practica_08/music.html" %}
+
+{% block datos %}
+<div class="resultados">
+    <h2>Datos del grupo:</h2>
+    <div class="datos">
+        <h3 id="grupo">{{ post.nombre }}</h3>
+        <h5>Fecha de fundación: {{ post.fecha_fundacion }}</h5>
+        <h5>Géneros/estilos musicales: {{ post.estilo }}</h5>
+        <h5>Lugar: <span id="ciudad">{{ post.ciudad }}</span>, <span id="pais">{{ post.pais }}</span></h5>
+    </div>
+</div>
+
+<a class="btn btn-warning" href="{% url 'editGrupo' pk=post.pk %}">Editar grupo<span class="glyphicon glyphicon-pencil"></span></a>
+<a class="btn btn-danger" href="{% url 'borrarGrupo' pk=post.pk %}">Borrar grupo<span class="glyphicon glyphicon-pencil"></span></a>
+
+{% endblock %}
+
+{% block mapa %}
+    <script type="text/javascript">
+        window.onload = function() {
+            L.mapquest.key = 'aC1hycyDlvbcbA1BcWD6zrt5FdGmmdSs';
+            var ciudad = document.getElementById("ciudad").textContent;
+            var pais = document.getElementById("pais").textContent;
+            var lugar = ciudad + ", " + pais;
+            console.log("Lugar: " + lugar);
+            L.mapquest.geocoding().geocode(lugar, createMap);
+
+            function createMap(error, response) {
+                var location = response.results[0].locations[0];
+                var latLng = location.displayLatLng;
+                var map = L.mapquest.map('map', {
+                    center: latLng,
+                    layers: L.mapquest.tileLayer('map'),
+                    zoom: 14
+                });
+                
+                L.marker(latLng, {
+                    icon: L.mapquest.icons.marker(),
+                    draggable: false
+                }).bindPopup(lugar).addTo(map);
+            }
+      }
+    </script>
+{% endblock %}
